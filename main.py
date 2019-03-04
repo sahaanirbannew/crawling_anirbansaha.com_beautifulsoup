@@ -77,10 +77,18 @@ def main():
     search_results_ = str(searchresults).split('<article class="result">')
     linked_listi = regex.findall(r'(https?://\S+)', str(search_results_))
 
-    link_list = []
+    link_list = []      #List to maintain log.
+    index_list = []     #List to maintain complete log.
 
+    import csv
+    with open("C:/Users/Anirban Saha/Dropbox/Anirban - Madhu/Python Written Files/index.csv") as index_file:
+        readCSV = csv.reader(index_file, delimiter=',')
+        for row in readCSV:
+            #print(row)
+            index_list.append(row[1])
 
-    f = open("C:/Users/Anirban Saha/Dropbox/Anirban - Madhu/Python Written Files/index_" + searchterm + ".csv", 'w',
+    # Maintains a log of all the files downloaded.
+    f = open("C:/Users/Anirban Saha/Dropbox/Anirban - Madhu/Python Written Files/index.csv", 'a',
              encoding='utf-8')
 
     for link in linked_listi:
@@ -90,8 +98,13 @@ def main():
             # print(link)
             if link not in link_list:
                 link_list.append(link)
-                #get_text_from_link(link)
-                f.write(str(link)+','+get_text_from_link(link)+'\n')
+
+                index_text = searchterm + ',' + str(link)
+                if link not in index_list:
+                    f.write(index_text+','+get_text_from_link(link)+'\n')
+                else:
+                    print("Skipped.")
+                    f.write(index_text + ', skipped.\n')
     f.close()
 
 if __name__ == '__main__':
